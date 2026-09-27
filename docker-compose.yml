@@ -9,12 +9,17 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: student_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # Công cụ quản lý Database (phpMyAdmin)
   phpmyadmin:
@@ -40,7 +45,8 @@ services:
     environment:
       DATABASE_URL: mysql+pymysql://root:rootpassword@db:3306/student_db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped

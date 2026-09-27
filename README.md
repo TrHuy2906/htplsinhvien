@@ -40,11 +40,13 @@ Sau khi tất cả container chuyển sang trạng thái "Running", bạn có th
 
 | Thành phần | Đường dẫn | Tài khoản mặc định | Mô tả |
 | :--- | :--- | :--- | :--- |
-| **Ứng dụng Web (Nginx)** | `http://localhost/students` | Không có | API lấy/thêm thông tin sinh viên |
-| **Kiểm tra sức khỏe (Health)** | `http://localhost/health` | Không có | Test đường dẫn API trạng thái |
+| **Ứng dụng Web (Giao diện UI)** | `http://localhost/` | Không có | Trang Dashboard quản lý sinh viên trực quan |
+| **API Sinh viên (JSON)** | `http://localhost/students` | Không có | API lấy/thêm/sửa/xoá thông tin sinh viên |
+| **Kiểm tra sức khỏe (Health)** | `http://localhost/health` | Không có | Test đường dẫn API trạng thái hệ thống |
 | **phpMyAdmin** | `http://localhost:8080` | `root` / `rootpassword` | Quản trị CSDL MySQL |
 | **Grafana** | `http://localhost:3000` | `admin` / `admin` | Xem Dashboard giám sát hệ thống |
 | **Prometheus** | `http://localhost:9090` | Không có | Kiểm tra Metrics và Targets |
+| **MySQL (Host)** | `localhost:3307` | `root` / `rootpassword` | Kết nối CSDL từ host (nếu dùng Workbench) |
 
 ### 4. Hướng dẫn xem Log bằng LogQL (Loki)
 1. Đăng nhập vào **Grafana** (`http://localhost:3000`).

@@ -12,8 +12,8 @@ WORKDIR /home/appuser/app
 COPY --chown=appuser:appuser requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Copy toàn bộ mã nguồn
-COPY --chown=appuser:appuser app.py .
+# Copy toàn bộ mã nguồn (gồm app.py, templates, static)
+COPY --chown=appuser:appuser . .
 
 # Đưa biến môi trường PATH để chạy được flask/gunicorn
 ENV PATH="/home/appuser/.local/bin:${PATH}"
