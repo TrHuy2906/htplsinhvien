@@ -1,0 +1,56 @@
+import traceback
+from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, current_app
+from database import db
+from models import User
+
+auth_bp = Blueprint('auth', __name__)
+
+def create_user(username: str, password: str) -> bool:
+    """Tạo người dùng mới với username và password đã cho.
+    Trả về True nếu tạo thành công, False nếu user đã tồn tại hoặc có lỗi.
+    """
+    try:
+        if User.query.filter_by(username=username).first():
+            return False
+        user = User(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        return True
+    except Exception as e:
+        current_app.logger.error(f"Error creating user: {e}\n{traceback.format_exc()}")
+        return False
+
+def authenticate(username: str, password: str):
+    """Xác thực người dùng. Trả về đối tượng User nếu hợp lệ, ngược lại trả về None."""
+    try:
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            return user
+        return None
+    except Exception as e:
+        current_app.logger.error(f"Authentication error: {e}\n{traceback.format_exc()}")
+        return None
+
+# Route xử lý Đăng nhập
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        data = request.get_json(force=True, silent=True) or request.form
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        user = authenticate(username, password)
+        if user:
+            session['user_id'] = user.id
+            session['username'] = user.username
+            return jsonify({'message': 'Login successful'}), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+    else:
+        return render_template('login.html')
+
+# Route xử lý Đăng xuất
+@auth_bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
