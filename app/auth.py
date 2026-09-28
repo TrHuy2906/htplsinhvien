@@ -5,14 +5,14 @@ from models import User
 
 auth_bp = Blueprint('auth', __name__)
 
-def create_user(username: str, password: str) -> bool:
-    """Tạo người dùng mới với username và password đã cho.
+def create_user(username: str, password: str, role: int = 0) -> bool:
+    """Tạo người dùng mới với username, password và role đã cho.
     Trả về True nếu tạo thành công, False nếu user đã tồn tại hoặc có lỗi.
     """
     try:
         if User.query.filter_by(username=username).first():
             return False
-        user = User(username=username)
+        user = User(username=username, role=role)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()

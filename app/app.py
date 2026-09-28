@@ -36,9 +36,9 @@ def init_db():
             with app.app_context():
                 db.create_all()
                 if Student.query.count() == 0:
-                    # Tạo tài khoản admin mặc định
+                    # Tạo tài khoản admin mặc định (role = 2: Quản trị viên)
                     if not User.query.filter_by(username='admin').first():
-                        create_user('admin', 'admin123')
+                        create_user('admin', 'admin123', role=2)
                     # Dữ liệu sinh viên mẫu
                     samples = [
                         Student(name="Nguyễn Văn An", class_name="CNTT-K15", score=8.8),
