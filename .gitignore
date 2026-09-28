@@ -13,3 +13,5 @@ env/
 .idea/
 .vscode/
 *.swp
+
+cookie.txt

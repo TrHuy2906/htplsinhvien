@@ -4,16 +4,16 @@ services:
   # Dịch vụ Database (MySQL)
   db:
     image: mysql:8.0
-    container_name: student_db
+    container_name: htpl_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: student_db
     ports:
-      - "3307:3306"
+      - "3308:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - htpl_db_data:/var/lib/mysql
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
@@ -24,16 +24,16 @@ services:
   # Công cụ quản lý Database (phpMyAdmin)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: student_phpmyadmin
+    container_name: htpl_phpmyadmin
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "8080:80"
+      - "8082:80"
     depends_on:
       - db
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
 
   # Ứng dụng Web Python (Flask)
@@ -41,14 +41,14 @@ services:
     build: 
       context: ./app
       dockerfile: Dockerfile
-    container_name: student_web
+    container_name: htpl_web
     environment:
       DATABASE_URL: mysql+pymysql://root:rootpassword@db:3306/student_db
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -59,69 +59,69 @@ services:
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
-    container_name: student_nginx
+    container_name: htpl_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "80:80"
+      - "8081:80"
     depends_on:
       - web
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
 
   # Prometheus (Thu thập metrics)
   prometheus:
     image: prom/prometheus
-    container_name: student_prometheus
+    container_name: htpl_prometheus
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
-      - "9090:9090"
+      - "9091:9090"
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
 
   # Grafana (Hiển thị biểu đồ)
   grafana:
     image: grafana/grafana
-    container_name: student_grafana
+    container_name: htpl_grafana
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
 
   # Loki (Lưu trữ Log tập trung)
   loki:
     image: grafana/loki:2.9.0
-    container_name: student_loki
+    container_name: htpl_loki
     ports:
-      - "3100:3100"
+      - "3101:3100"
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
 
   # Promtail (Thu thập Log container gửi về Loki)
   promtail:
     image: grafana/promtail:2.9.0
-    container_name: student_promtail
+    container_name: htpl_promtail
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
     command: -config.file=/etc/promtail/config.yml
     networks:
-      - app-network
+      - htpl-network
     restart: unless-stopped
 
 volumes:
-  db_data:
+  htpl_db_data:
 
 networks:
-  app-network:
+  htpl-network:
     driver: bridge
