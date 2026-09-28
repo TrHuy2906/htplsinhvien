@@ -1,9 +1,37 @@
 import traceback
+from functools import wraps
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, current_app
 from database import db
 from models import User
 
 auth_bp = Blueprint('auth', __name__)
+
+def login_required(f):
+    """Decorator yêu cầu người dùng phải đăng nhập trước khi truy cập route."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('user_id'):
+            if request.is_json or request.path.startswith('/students') or 'application/json' in request.headers.get('Accept', ''):
+                return jsonify({'error': 'Unauthorized: Login required'}), 401
+            return redirect(url_for('auth.login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def role_required(*allowed_roles):
+    """Decorator yêu cầu người dùng phải có vai trò (role) được chỉ định."""
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not session.get('user_id'):
+                if request.is_json or request.path.startswith('/students') or 'application/json' in request.headers.get('Accept', ''):
+                    return jsonify({'error': 'Unauthorized: Login required'}), 401
+                return redirect(url_for('auth.login'))
+            user_role = session.get('role')
+            if user_role not in allowed_roles:
+                return jsonify({'error': 'Forbidden: Insufficient permissions'}), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 def create_user(username: str, password: str, role: int = 0) -> bool:
     """Tạo người dùng mới với username, password và role đã cho.
@@ -43,6 +71,7 @@ def login():
         if user:
             session['user_id'] = user.id
             session['username'] = user.username
+            session['role'] = user.role
             return jsonify({'message': 'Login successful'}), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401

@@ -1,17 +1,22 @@
 from flask import Blueprint, request, jsonify
 from database import db
 from models import Student
+from auth import login_required, role_required
 
 sinhvien_bp = Blueprint('sinhvien', __name__)
 
 # API Lấy danh sách sinh viên
 @sinhvien_bp.route('/students', methods=['GET'])
+@login_required
+@role_required(2)
 def get_students():
     students = Student.query.order_by(Student.id.desc()).all()
     return jsonify([s.to_dict() for s in students])
 
 # API Lấy thông tin 1 sinh viên
 @sinhvien_bp.route('/students/<int:id>', methods=['GET'])
+@login_required
+@role_required(2)
 def get_student(id):
     student = Student.query.get(id)
     if not student:
@@ -20,6 +25,8 @@ def get_student(id):
 
 # API Thêm sinh viên mới
 @sinhvien_bp.route('/students', methods=['POST'])
+@login_required
+@role_required(2)
 def add_student():
     data = request.get_json(force=True, silent=True) or request.form.to_dict()
     if not data or 'name' not in data:
@@ -45,6 +52,8 @@ def add_student():
 
 # API Cập nhật sinh viên
 @sinhvien_bp.route('/students/<int:id>', methods=['PUT'])
+@login_required
+@role_required(2)
 def update_student(id):
     student = Student.query.get(id)
     if not student:
@@ -74,6 +83,8 @@ def update_student(id):
 
 # API Xóa sinh viên
 @sinhvien_bp.route('/students/<int:id>', methods=['DELETE'])
+@login_required
+@role_required(2)
 def delete_student(id):
     student = Student.query.get(id)
     if not student:

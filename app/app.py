@@ -6,7 +6,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 
 from database import db
 from models import Student, User
-from auth import auth_bp, create_user
+from auth import auth_bp, create_user, login_required, role_required
 from sinhvien import sinhvien_bp
 
 app = Flask(__name__)
@@ -61,6 +61,8 @@ def init_db():
 
 # Giao diện Web Quản lý Sinh viên chính
 @app.route('/')
+@login_required
+@role_required(2)
 def index():
     return render_template('index.html')
 
