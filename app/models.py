@@ -117,3 +117,21 @@ class ChuyenNganh(db.Model):
             'name': self.name,
             'faculty_id': self.faculty_id
         }
+
+# Model Niên Khóa
+class NienKhoa(db.Model):
+    __tablename__ = 'nien_khoa'
+    id = db.Column(db.Integer, primary_key=True)
+    cohort_code = db.Column(db.String(50), unique=True, nullable=False) # MNK
+    name = db.Column(db.String(150), nullable=False) # TenNienKhoa
+    start_year = db.Column(db.Integer, nullable=False) # NamBatDau
+    end_year = db.Column(db.Integer, nullable=False) # NamKetThuc
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'cohort_code': self.cohort_code,
+            'name': self.name,
+            'start_year': self.start_year,
+            'end_year': self.end_year
+        }
