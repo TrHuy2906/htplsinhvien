@@ -53,7 +53,7 @@ function populateClassFilter() {
     if (!filter) return;
     const currentVal = filter.value;
     const classes = Array.from(new Set(allLecturers.map(s => s.department_id).filter(Boolean))).sort();
-    
+
     filter.innerHTML = '<option value="ALL">Tất cả các lớp</option>';
     classes.forEach(c => {
         const opt = document.createElement('option');
@@ -128,7 +128,7 @@ function renderLecturers() {
                         <div class="avatar" style="background: ${avatarBg};">${initials}</div>
                         <div>
                             <div class="lecturer-name">${s.name}</div>
-                            <div class="lecturer-id">${s.gender ? s.gender + ' | ' : ''}${s.dob || 'Chưa cập nhật ngày sinh'}</div>
+                            <div class="lecturer-id">${s.gender || ''}</div>
                         </div>
                     </div>
                 </td>
@@ -219,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const score = document.getElementById('lecturerScore').value.trim();
             const lecturer_code = document.getElementById('lecturerCode').value.trim() || null;
             const gender = document.getElementById('lecturerGender').value || null;
-            const dob = document.getElementById('lecturerDob').value || null;
             const email = document.getElementById('lecturerEmail').value.trim() || null;
             const research_direction = document.getElementById('lecturerResearch').value.trim() || null;
             const education_level = document.getElementById('lecturerEducation').value.trim() || null;
@@ -236,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 score,
                 lecturer_code,
                 gender,
-                dob,
                 email,
                 account_id
             };
@@ -260,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (!res.ok) throw new Error('Thao tác không thành công');
-                
+
                 showToast(id ? 'Đã cập nhật giảng viên thành công!' : 'Đã thêm giảng viên thành công!', 'success');
                 closeModal();
                 loadLecturers();
@@ -327,12 +325,11 @@ window.editLecturer = function(id) {
     document.getElementById('lecturerScore').value = s.specialization;
     document.getElementById('lecturerCode').value = s.lecturer_code || '';
     document.getElementById('lecturerGender').value = s.gender || '';
-    document.getElementById('lecturerDob').value = s.dob || '';
     document.getElementById('lecturerEmail').value = s.email || '';
     document.getElementById('lecturerResearch').value = s.research_direction || '';
     document.getElementById('lecturerEducation').value = s.education_level || '';
     document.getElementById('lecturerAccountId').value = s.account_id || '';
-    
+
     const rank = {label: s.education_level || "Chưa có", css: "info", icon: "fa-certificate"};
     const preview = document.getElementById('scoreRatingPreview');
     if (preview) {
