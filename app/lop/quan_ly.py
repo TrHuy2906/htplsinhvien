@@ -43,7 +43,6 @@ def add_lop():
 
     if not ChuyenNganh.query.get(major_id):
         return jsonify({"error": "major_id does not exist"}), 400
-
     if not NienKhoa.query.get(cohort_id):
         return jsonify({"error": "cohort_id does not exist"}), 400
 
@@ -60,9 +59,9 @@ def add_lop():
         db.session.add(new_item)
         db.session.commit()
         return jsonify({"message": "Lop created successfully", "lop": new_item.to_dict()}), 201
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 @lop_bp.route('/lop/<int:id>', methods=['PUT'])
 @login_required
@@ -79,8 +78,11 @@ def update_lop(id):
     if data is None:
         return jsonify({'error': 'Invalid JSON format'}), 400
 
+    if not isinstance(data, dict):
+        return jsonify({'error': 'Invalid data format, expected JSON object'}), 400
+
     if not data:
-        return jsonify({"error": "No data provided"}), 400
+        return jsonify({"message": "Lop updated successfully", "lop": item.to_dict()}), 200
 
     update_class_code = None
     update_name = None
@@ -133,6 +135,6 @@ def update_lop(id):
 
         db.session.commit()
         return jsonify({"message": "Lop updated successfully", "lop": item.to_dict()}), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
