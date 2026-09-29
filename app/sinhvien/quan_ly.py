@@ -165,6 +165,11 @@ def delete_student(id):
     if not student:
         return jsonify({'error': 'Student not found'}), 404
 
-    db.session.delete(student)
-    db.session.commit()
+    try:
+        db.session.delete(student)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Database error while deleting'}), 500
+
     return jsonify({'message': 'Student deleted successfully'}), 200
