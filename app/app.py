@@ -8,6 +8,7 @@ from database import db
 from models import Student, User
 from auth import auth_bp, create_user, login_required, role_required
 from sinhvien import sinhvien_bp
+from giangvien import giangvien_bp
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Secure secret key for session management
@@ -28,6 +29,7 @@ db.init_app(app)
 # Đăng ký các module Blueprint
 app.register_blueprint(auth_bp)
 app.register_blueprint(sinhvien_bp)
+app.register_blueprint(giangvien_bp)
 
 def init_db():
     retries = 20
@@ -65,6 +67,13 @@ def init_db():
 @role_required(2)
 def index():
     return render_template('index.html')
+
+# Giao diện Web Quản lý Giảng viên
+@app.route('/giangvien')
+@login_required
+@role_required(2)
+def giangvien_index():
+    return render_template('giangvien.html')
 
 # API Giám sát kiểm tra sức khoẻ hệ thống (Health Check)
 @app.route('/health', methods=['GET'])

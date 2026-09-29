@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hệ thống Quản lý Sinh viên chuyên nghiệp, trực quan, hỗ trợ theo dõi điểm số, xếp loại và giám sát hệ thống thời gian thực.">
-    <title>Hệ Thống Quản Lý Sinh Viên | Student Management</title>
+    <meta name="description" content="Hệ thống Quản lý Giảng viên chuyên nghiệp, trực quan, hỗ trợ theo dõi điểm số, xếp loại và giám sát hệ thống thời gian thực.">
+    <title>Hệ Thống Quản Lý Giảng Viên | Lecturer Management</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,7 @@
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div class="brand-title">
-                    <h1 id="mainTitle">Hệ Thống Quản Lý Sinh Viên</h1>
+                    <h1 id="mainTitle">Hệ Thống Quản Lý Giảng Viên</h1>
                     <p>Đề tài số 2 - Triển khai &amp; Quản trị Hệ thống Phần mềm</p>
                 </div>
             </div>
@@ -44,10 +44,10 @@
         <section class="stats-grid" aria-label="Thống kê tổng quan">
             <article class="stat-card">
                 <div class="stat-header">
-                    <span>Tổng số sinh viên</span>
+                    <span>Tổng số giảng viên</span>
                     <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
                 </div>
-                <div class="stat-value" id="statTotalStudents">0</div>
+                <div class="stat-value" id="statTotalLecturers">0</div>
                 <div class="stat-footer"><i class="fa-solid fa-circle-check" style="color: var(--success);"></i> Dữ liệu MySQL đồng bộ</div>
             </article>
 
@@ -62,11 +62,11 @@
 
             <article class="stat-card">
                 <div class="stat-header">
-                    <span>Sinh viên Giỏi &amp; Xuất sắc</span>
+                    <span>Giảng viên Giỏi &amp; Xuất sắc</span>
                     <div class="stat-icon icon-emerald"><i class="fa-solid fa-award"></i></div>
                 </div>
-                <div class="stat-value" id="statTopStudents">0</div>
-                <div class="stat-footer"><i class="fa-solid fa-star" style="color: var(--warning);"></i> Điểm số từ 8.0 trở lên</div>
+                <div class="stat-value" id="statTopLecturers">0</div>
+                <div class="stat-footer"><i class="fa-solid fa-star" style="color: var(--warning);"></i> Chuyên môn từ 8.0 trở lên</div>
             </article>
 
             <article class="stat-card">
@@ -75,20 +75,20 @@
                     <div class="stat-icon icon-amber"><i class="fa-solid fa-shapes"></i></div>
                 </div>
                 <div class="stat-value" id="statTotalClasses">0</div>
-                <div class="stat-footer"><i class="fa-solid fa-layer-group"></i> Lớp đang đào tạo</div>
+                <div class="stat-footer"><i class="fa-solid fa-layer-group"></i> Bộ môn đang đào tạo</div>
             </article>
         </section>
 
         <!-- Navigation Bar -->
         <nav style="margin-bottom: 20px; display: flex; gap: 15px;">
-            <a href="/" class="btn-primary" style="text-decoration: none;"><i class="fa-solid fa-users"></i> Quản lý Sinh viên</a>
-            <a href="/giangvien" class="btn-secondary" style="text-decoration: none;"><i class="fa-solid fa-chalkboard-user"></i> Quản lý Giảng viên</a>
+            <a href="/" class="btn-secondary" style="text-decoration: none;"><i class="fa-solid fa-users"></i> Quản lý Sinh viên</a>
+            <a href="/giangvien" class="btn-primary" style="text-decoration: none;"><i class="fa-solid fa-chalkboard-user"></i> Quản lý Giảng viên</a>
         </nav>
         <!-- Action & Filter Bar -->
         <section class="action-bar">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Tìm theo tên, mã sinh viên, hoặc lớp học..." autocomplete="off">
+                <input type="text" id="searchInput" placeholder="Tìm theo tên, mã giảng viên, hoặc lớp học..." autocomplete="off">
             </div>
             <div class="filter-controls">
                 <select class="select-filter" id="classFilter">
@@ -109,7 +109,7 @@
                     <option value="SCORE_ASC">Điểm: Thấp &rarr; Cao</option>
                 </select>
                 <button class="btn-primary" id="openAddModalBtn">
-                    <i class="fa-solid fa-user-plus"></i> Thêm Sinh Viên
+                    <i class="fa-solid fa-user-plus"></i> Thêm Giảng Viên
                 </button>
             </div>
         </section>
@@ -117,27 +117,27 @@
         <!-- Main Data Table -->
         <main class="content-card">
             <div class="table-responsive">
-                <table class="student-table" id="studentTable">
+                <table class="lecturer-table" id="lecturerTable">
                     <thead>
                         <tr>
-                            <th style="width: 80px;">Mã SV</th>
-                            <th>Thông tin sinh viên</th>
+                            <th style="width: 80px;">Mã GV</th>
+                            <th>Thông tin giảng viên</th>
                             <th>Liên hệ & Tài khoản</th>
-                            <th>Lớp</th>
-                            <th>Điểm số</th>
-                            <th>Xếp loại học lực</th>
+                            <th>Bộ môn</th>
+                            <th>Chuyên môn</th>
+                            <th>Trình độ</th>
                             <th style="text-align: right; width: 120px;">Thao tác</th>
                         </tr>
                     </thead>
-                    <tbody id="studentTableBody">
+                    <tbody id="lecturerTableBody">
                         <!-- Rendered dynamically -->
                     </tbody>
                 </table>
             </div>
             <div class="empty-state" id="emptyState" style="display: none;">
                 <i class="fa-solid fa-folder-open"></i>
-                <h3>Không tìm thấy sinh viên nào</h3>
-                <p>Hãy thử tìm kiếm với từ khóa khác hoặc nhấn "Thêm Sinh Viên" mới.</p>
+                <h3>Không tìm thấy giảng viên nào</h3>
+                <p>Hãy thử tìm kiếm với từ khóa khác hoặc nhấn "Thêm Giảng Viên" mới.</p>
             </div>
         </main>
 
@@ -166,35 +166,35 @@
         </footer>
     </div>
 
-    <!-- Modal Form (Add & Edit Student) -->
-    <div class="modal-overlay" id="studentModal">
+    <!-- Modal Form (Add & Edit Lecturer) -->
+    <div class="modal-overlay" id="lecturerModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modalTitle">Thêm Sinh Viên Mới</h2>
+                <h2 id="modalTitle">Thêm Giảng Viên Mới</h2>
                 <button class="modal-close" id="modalCloseBtn">&times;</button>
             </div>
-            <form id="studentForm">
+            <form id="lecturerForm">
                 <div class="modal-body">
-                    <input type="hidden" id="studentId" value="">
+                    <input type="hidden" id="lecturerId" value="">
                     
                     <div class="form-group">
-                        <label for="studentName"><i class="fa-solid fa-user"></i> Họ và tên sinh viên *</label>
-                        <input type="text" class="form-control" id="studentName" required placeholder="Ví dụ: Nguyễn Văn An" autocomplete="off">
+                        <label for="lecturerName"><i class="fa-solid fa-user"></i> Họ và tên giảng viên *</label>
+                        <input type="text" class="form-control" id="lecturerName" required placeholder="Ví dụ: Nguyễn Văn An" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="studentCode"><i class="fa-solid fa-id-card"></i> Mã sinh viên</label>
-                        <input type="text" class="form-control" id="studentCode" placeholder="Ví dụ: SV001" autocomplete="off">
+                        <label for="lecturerCode"><i class="fa-solid fa-id-card"></i> Mã giảng viên</label>
+                        <input type="text" class="form-control" id="lecturerCode" placeholder="Ví dụ: SV001" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="studentClass"><i class="fa-solid fa-chalkboard-user"></i> Lớp học *</label>
-                        <input type="text" class="form-control" id="studentClass" required placeholder="Ví dụ: CNTT-K15" autocomplete="off">
+                        <label for="lecturerClass"><i class="fa-solid fa-chalkboard-user"></i> Bộ môn *</label>
+                        <input type="text" class="form-control" id="lecturerClass" required placeholder="Ví dụ: CNTT-K15" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="studentGender"><i class="fa-solid fa-venus-mars"></i> Giới tính</label>
-                        <select class="form-control" id="studentGender">
+                        <label for="lecturerGender"><i class="fa-solid fa-venus-mars"></i> Giới tính</label>
+                        <select class="form-control" id="lecturerGender">
                             <option value="">-- Chọn giới tính --</option>
                             <option value="Nam">Nam</option>
                             <option value="Nữ">Nữ</option>
@@ -203,23 +203,33 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="studentDob"><i class="fa-solid fa-calendar"></i> Ngày sinh</label>
-                        <input type="date" class="form-control" id="studentDob">
+                        <label for="lecturerDob"><i class="fa-solid fa-calendar"></i> Ngày sinh</label>
+                        <input type="date" class="form-control" id="lecturerDob">
                     </div>
 
                     <div class="form-group">
-                        <label for="studentEmail"><i class="fa-solid fa-envelope"></i> Email</label>
-                        <input type="email" class="form-control" id="studentEmail" placeholder="Ví dụ: email@example.com" autocomplete="off">
+                        <label for="lecturerEmail"><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" class="form-control" id="lecturerEmail" placeholder="Ví dụ: email@example.com" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="studentAccountId"><i class="fa-solid fa-user-gear"></i> Mã tài khoản liên kết (User ID)</label>
-                        <input type="number" class="form-control" id="studentAccountId" placeholder="Ví dụ: 2">
+                        <label for="lecturerResearch"><i class="fa-solid fa-microscope"></i> Hướng nghiên cứu</label>
+                        <input type="text" class="form-control" id="lecturerResearch" placeholder="Ví dụ: Trí tuệ nhân tạo" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="studentScore"><i class="fa-solid fa-star-half-stroke"></i> Điểm tổng kết (0.0 - 10.0) *</label>
-                        <input type="number" class="form-control" id="studentScore" step="0.1" min="0" max="10" required placeholder="Ví dụ: 8.5">
+                        <label for="lecturerEducation"><i class="fa-solid fa-graduation-cap"></i> Trình độ học vấn</label>
+                        <input type="text" class="form-control" id="lecturerEducation" placeholder="Ví dụ: Tiến sĩ" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lecturerAccountId"><i class="fa-solid fa-user-gear"></i> Mã tài khoản liên kết (User ID)</label>
+                        <input type="number" class="form-control" id="lecturerAccountId" placeholder="Ví dụ: 2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lecturerScore"><i class="fa-solid fa-star-half-stroke"></i> Chuyên môn *</label>
+                        <input type="text" class="form-control" id="lecturerScore" placeholder="Ví dụ: Khoa học máy tính" autocomplete="off">
                         <div class="score-preview-box">
                             <span>Đánh giá học lực dự kiến:</span>
                             <strong id="scoreRatingPreview" style="color: var(--primary);">--</strong>
@@ -228,7 +238,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" id="modalCancelBtn">Hủy</button>
-                    <button type="submit" class="btn-primary" id="saveStudentBtn">
+                    <button type="submit" class="btn-primary" id="saveLecturerBtn">
                         <i class="fa-solid fa-floppy-disk"></i> Lưu thông tin
                     </button>
                 </div>
@@ -240,12 +250,12 @@
     <div class="modal-overlay" id="deleteConfirmModal">
         <div class="modal-card" style="max-width: 420px;">
             <div class="modal-header">
-                <h2>Xác nhận xóa sinh viên</h2>
+                <h2>Xác nhận xóa giảng viên</h2>
                 <button class="modal-close" id="deleteModalCloseBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5;">
-                    Bạn có chắc chắn muốn xóa sinh viên <strong id="deleteStudentName" style="color: var(--danger);"></strong> (Mã SV: <span id="deleteStudentId"></span>) khỏi hệ thống không? Hành động này không thể hoàn tác.
+                    Bạn có chắc chắn muốn xóa giảng viên <strong id="deleteLecturerName" style="color: var(--danger);"></strong> (Mã GV: <span id="deleteLecturerId"></span>) khỏi hệ thống không? Hành động này không thể hoàn tác.
                 </p>
             </div>
             <div class="modal-footer">
@@ -259,6 +269,6 @@
 
     <!-- Application Scripts -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/sinhvien.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/giangvien.js') }}"></script>
 </body>
 </html>

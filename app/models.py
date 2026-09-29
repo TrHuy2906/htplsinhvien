@@ -41,3 +41,33 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+# Model Giảng viên
+class Lecturer(db.Model):
+    __tablename__ = 'lecturer'
+    id = db.Column(db.Integer, primary_key=True)
+    lecturer_code = db.Column(db.String(50), unique=True, nullable=True) # MGV
+    name = db.Column(db.String(100), nullable=False) # HoTen
+    email = db.Column(db.String(100), unique=True, nullable=True) # Email
+    phone = db.Column(db.String(20), nullable=True) # SDT
+    department_id = db.Column(db.Integer, nullable=True) # MBM - Không tạo FK vì chưa có bảng BoMon
+    specialization = db.Column(db.String(100), nullable=True) # ChuyenMon
+    account_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'), unique=True, nullable=True) # MTK
+    gender = db.Column(db.String(10), nullable=True) # Gioitinh
+    research_direction = db.Column(db.String(255), nullable=True) # HuongNghienCuu
+    education_level = db.Column(db.String(50), nullable=True) # TrinhDoHocVan
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'lecturer_code': self.lecturer_code,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'department_id': self.department_id,
+            'specialization': self.specialization,
+            'account_id': self.account_id,
+            'gender': self.gender,
+            'research_direction': self.research_direction,
+            'education_level': self.education_level
+        }
