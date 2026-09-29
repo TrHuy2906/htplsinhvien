@@ -43,6 +43,7 @@ def add_lop():
 
     if not ChuyenNganh.query.get(major_id):
         return jsonify({"error": "major_id does not exist"}), 400
+
     if not NienKhoa.query.get(cohort_id):
         return jsonify({"error": "cohort_id does not exist"}), 400
 
@@ -79,8 +80,7 @@ def update_lop(id):
         return jsonify({'error': 'Invalid JSON format'}), 400
 
     if not data:
-        # Partial update logic allows empty JSON
-        return jsonify({"message": "Lop updated successfully", "lop": item.to_dict()}), 200
+        return jsonify({"error": "No data provided"}), 400
 
     update_class_code = None
     update_name = None

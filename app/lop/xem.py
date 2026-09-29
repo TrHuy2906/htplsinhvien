@@ -1,26 +1,21 @@
 from flask import render_template, request, jsonify
 from . import lop_bp
-from models import Lop
+from models import Lop, db
 from auth import login_required, role_required
-from sqlalchemy import and_
 
 @lop_bp.route('/lop', methods=['GET'])
 @login_required
 @role_required(2)
 def get_lop_list():
-    if request.headers.get('Accept') == 'application/json' or request.is_json:
-        ml = request.args.get('ml', '').strip()
-        name = request.args.get('name', '').strip()
+    if request.headers.get('Accept') == 'application/json' or request.is_json or request.headers.get('Sec-Fetch-Dest') == 'empty':
+        search_name = request.args.get('name', '').strip().lower()
+        search_code = request.args.get('ml', '').strip()
 
         query = Lop.query
-        conditions = []
-        if ml:
-            conditions.append(Lop.class_code.ilike(f"%{ml}%"))
-        if name:
-            conditions.append(Lop.name.ilike(f"%{name}%"))
-
-        if conditions:
-            query = query.filter(and_(*conditions))
+        if search_name:
+            query = query.filter(db.func.lower(Lop.name).like(f"%{search_name}%"))
+        if search_code:
+            query = query.filter(Lop.class_code == search_code)
 
         items = query.all()
         return jsonify([item.to_dict() for item in items]), 200
@@ -30,8 +25,11 @@ def get_lop_list():
 @lop_bp.route('/lop/<int:id>', methods=['GET'])
 @login_required
 @role_required(2)
-def get_lop_detail(id):
-    item = Lop.query.get(id)
-    if item:
+def get_lop_by_id(id):
+    try:
+        item = Lop.query.get(id)
+        if not item:
+            return jsonify({"error": "Lop not found"}), 404
         return jsonify(item.to_dict()), 200
-    return jsonify({'error': 'Lop not found'}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
