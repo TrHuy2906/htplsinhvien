@@ -64,7 +64,13 @@ def authenticate(username: str, password: str):
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        data = request.get_json(force=True, silent=True) or request.form
+        if request.is_json:
+            data = request.get_json(silent=True)
+            if data is None:
+                return jsonify({'error': 'Invalid JSON format'}), 400
+        else:
+            data = request.form
+            
         username = data.get('username', '').strip()
         password = data.get('password', '')
         user = authenticate(username, password)
