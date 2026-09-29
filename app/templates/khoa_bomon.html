@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Khoa & Bộ Môn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .split-container {
+            display: flex;
+            gap: 20px;
+        }
+        .half-panel {
+            flex: 1;
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .half-panel h3 { margin-top: 0; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <h2>EduManage Pro</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/" class="nav-item">
+                    <i class="fa-solid fa-users"></i> Quản lý Sinh viên
+                </a>
+                <a href="/giangvien" class="nav-item">
+                    <i class="fa-solid fa-chalkboard-user"></i> Quản lý Giảng viên
+                </a>
+                <a href="/khoa_bomon" class="nav-item active">
+                    <i class="fa-solid fa-building"></i> Khoa & Bộ môn
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1><i class="fa-solid fa-building"></i> Quản Lý Khoa & Bộ Môn</h1>
+                    <p class="subtitle">Quản trị danh mục Khoa và Bộ môn thuộc trường</p>
+                </div>
+            </header>
+
+            <div class="split-container">
+                <!-- Khoa Panel -->
+                <div class="half-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Danh sách Khoa</h3>
+                        <button class="btn-primary" id="openKhoaModalBtn"><i class="fa-solid fa-plus"></i> Thêm Khoa</button>
+                    </div>
+                    <div class="search-box" style="margin-bottom: 15px;">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="khoaSearchInput" placeholder="Tìm tên khoa...">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã Khoa</th>
+                                    <th>Tên Khoa</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="khoaTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- BoMon Panel -->
+                <div class="half-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Danh sách Bộ môn</h3>
+                        <button class="btn-primary" id="openBoMonModalBtn"><i class="fa-solid fa-plus"></i> Thêm Bộ môn</button>
+                    </div>
+                    <div class="search-box" style="margin-bottom: 15px;">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="bomonSearchInput" placeholder="Tìm tên bộ môn...">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã BM</th>
+                                    <th>Tên Bộ Môn</th>
+                                    <th>Khoa trực thuộc</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bomonTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Khoa -->
+    <div class="modal-overlay" id="khoaModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="khoaModalTitle">Thêm Khoa Mới</h2>
+                <button class="modal-close" id="khoaModalCloseBtn">&times;</button>
+            </div>
+            <form id="khoaForm">
+                <div class="modal-body">
+                    <input type="hidden" id="khoaId" value="">
+                    
+                    <div class="form-group">
+                        <label for="khoaCode"><i class="fa-solid fa-barcode"></i> Mã khoa *</label>
+                        <input type="text" class="form-control" id="khoaCode" required placeholder="Ví dụ: CNTT">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="khoaName"><i class="fa-solid fa-building"></i> Tên khoa *</label>
+                        <input type="text" class="form-control" id="khoaName" required placeholder="Ví dụ: Công nghệ thông tin">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="khoaModalCancelBtn">Hủy</button>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-save"></i> Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for BoMon -->
+    <div class="modal-overlay" id="bomonModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="bomonModalTitle">Thêm Bộ Môn Mới</h2>
+                <button class="modal-close" id="bomonModalCloseBtn">&times;</button>
+            </div>
+            <form id="bomonForm">
+                <div class="modal-body">
+                    <input type="hidden" id="bomonId" value="">
+                    
+                    <div class="form-group">
+                        <label for="bomonCode"><i class="fa-solid fa-barcode"></i> Mã bộ môn *</label>
+                        <input type="text" class="form-control" id="bomonCode" required placeholder="Ví dụ: KTPM">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bomonName"><i class="fa-solid fa-book"></i> Tên bộ môn *</label>
+                        <input type="text" class="form-control" id="bomonName" required placeholder="Ví dụ: Kỹ thuật phần mềm">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bomonKhoaId"><i class="fa-solid fa-building"></i> Khoa trực thuộc *</label>
+                        <select class="form-control" id="bomonKhoaId" required>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="bomonModalCancelBtn">Hủy</button>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-save"></i> Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/static/js/khoa_bomon.js"></script>
+</body>
+</html>

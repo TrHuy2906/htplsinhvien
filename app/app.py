@@ -9,6 +9,8 @@ from models import Student, User
 from auth import auth_bp, create_user, login_required, role_required
 from sinhvien import sinhvien_bp
 from giangvien import giangvien_bp
+from khoa import khoa_bp
+from bomon import bomon_bp
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Secure secret key for session management
@@ -30,6 +32,8 @@ db.init_app(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(sinhvien_bp)
 app.register_blueprint(giangvien_bp)
+app.register_blueprint(khoa_bp)
+app.register_blueprint(bomon_bp)
 
 def init_db():
     retries = 20
@@ -74,6 +78,13 @@ def index():
 @role_required(2)
 def giangvien_index():
     return render_template('giangvien.html')
+
+# Giao diện Web Quản lý Khoa & Bộ Môn
+@app.route('/khoa_bomon')
+@login_required
+@role_required(2)
+def khoa_bomon_index():
+    return render_template('khoa_bomon.html')
 
 # API Giám sát kiểm tra sức khoẻ hệ thống (Health Check)
 @app.route('/health', methods=['GET'])

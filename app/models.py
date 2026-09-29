@@ -50,7 +50,7 @@ class Lecturer(db.Model):
     name = db.Column(db.String(100), nullable=False) # HoTen
     email = db.Column(db.String(100), unique=True, nullable=True) # Email
     phone = db.Column(db.String(20), nullable=True) # SDT
-    department_id = db.Column(db.Integer, nullable=True) # MBM - Không tạo FK vì chưa có bảng BoMon
+    department_id = db.Column(db.Integer, db.ForeignKey('bomon.id', ondelete='SET NULL'), nullable=True) # MBM
     specialization = db.Column(db.String(100), nullable=True) # ChuyenMon
     account_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'), unique=True, nullable=True) # MTK
     gender = db.Column(db.String(10), nullable=True) # Gioitinh
@@ -70,4 +70,34 @@ class Lecturer(db.Model):
             'gender': self.gender,
             'research_direction': self.research_direction,
             'education_level': self.education_level
+        }
+
+# Model Khoa
+class Khoa(db.Model):
+    __tablename__ = 'khoa'
+    id = db.Column(db.Integer, primary_key=True)
+    khoa_code = db.Column(db.String(50), unique=True, nullable=False) # MK
+    name = db.Column(db.String(150), nullable=False) # TenKhoa
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'khoa_code': self.khoa_code,
+            'name': self.name
+        }
+
+# Model Bộ Môn
+class BoMon(db.Model):
+    __tablename__ = 'bomon'
+    id = db.Column(db.Integer, primary_key=True)
+    bomon_code = db.Column(db.String(50), unique=True, nullable=False) # MBM
+    name = db.Column(db.String(150), nullable=False) # TenBM
+    khoa_id = db.Column(db.Integer, db.ForeignKey('khoa.id', ondelete='CASCADE'), nullable=False) # MK
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'bomon_code': self.bomon_code,
+            'name': self.name,
+            'khoa_id': self.khoa_id
         }
