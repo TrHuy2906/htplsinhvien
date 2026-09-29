@@ -13,6 +13,7 @@ from khoa import khoa_bp
 from bomon import bomon_bp
 from chuyennganh import chuyennganh_bp
 from nienkhoa import nienkhoa_bp
+from lop import lop_bp
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Secure secret key for session management
@@ -38,6 +39,7 @@ app.register_blueprint(khoa_bp)
 app.register_blueprint(bomon_bp)
 app.register_blueprint(chuyennganh_bp)
 app.register_blueprint(nienkhoa_bp)
+app.register_blueprint(lop_bp)
 
 def init_db():
     retries = 20

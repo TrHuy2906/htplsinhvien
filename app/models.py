@@ -135,3 +135,21 @@ class NienKhoa(db.Model):
             'start_year': self.start_year,
             'end_year': self.end_year
         }
+
+# Model Lớp
+class Lop(db.Model):
+    __tablename__ = 'lop'
+    id = db.Column(db.Integer, primary_key=True)
+    class_code = db.Column(db.String(50), unique=True, nullable=False) # ML
+    name = db.Column(db.String(150), nullable=False) # TenLop
+    major_id = db.Column(db.Integer, db.ForeignKey('chuyen_nganh.id', ondelete='CASCADE'), nullable=False) # MCN
+    cohort_id = db.Column(db.Integer, db.ForeignKey('nien_khoa.id', ondelete='CASCADE'), nullable=False) # MNK
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'class_code': self.class_code,
+            'name': self.name,
+            'major_id': self.major_id,
+            'cohort_id': self.cohort_id
+        }

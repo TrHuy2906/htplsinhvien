@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Lớp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .actions-col {
+            width: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h2><i class="fa-solid fa-graduation-cap"></i> Quản lý SV</h2>
+        </div>
+        <div class="user-info">
+            <p>Xin chào, <span id="current-username">Admin</span></p>
+            <p class="role">Quản trị viên</p>
+        </div>
+        <nav>
+            <a href="/" class="nav-item">
+                <i class="fa-solid fa-users"></i> Sinh viên
+            </a>
+            <a href="/giangvien_page" class="nav-item">
+                <i class="fa-solid fa-chalkboard-user"></i> Giảng viên
+            </a>
+            <a href="/khoa_bomon" class="nav-item">
+                <i class="fa-solid fa-building"></i> Khoa & Bộ môn
+            </a>
+            <a href="/chuyennganh" class="nav-item">
+                <i class="fa-solid fa-book-open"></i> Chuyên ngành
+            </a>
+            <a href="/nienkhoa" class="nav-item">
+                <i class="fa-solid fa-calendar-alt"></i> Niên khóa
+            </a>
+            <a href="/lop" class="nav-item active">
+                <i class="fa-solid fa-chalkboard"></i> Lớp
+            </a>
+        </nav>
+        <button id="logout-btn" class="btn-danger" style="margin: 20px; width: calc(100% - 40px);">
+            <i class="fa-solid fa-sign-out-alt"></i> Đăng xuất
+        </button>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Quản lý Lớp</h1>
+            <button class="btn-primary" onclick="showAddModal()">
+                <i class="fa-solid fa-plus"></i> Thêm Lớp
+            </button>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="search-ml" placeholder="Tìm theo Mã lớp...">
+            <input type="text" id="search-name" placeholder="Tìm theo Tên lớp...">
+            <button class="btn-primary" onclick="searchLop()">
+                <i class="fa-solid fa-search"></i> Tìm kiếm
+            </button>
+            <button class="btn-secondary" onclick="resetSearch()">
+                <i class="fa-solid fa-redo"></i> Đặt lại
+            </button>
+        </div>
+
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mã Lớp</th>
+                        <th>Tên Lớp</th>
+                        <th>Chuyên Ngành (MCN)</th>
+                        <th>Niên Khóa (MNK)</th>
+                        <th class="actions-col">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="lop-table-body">
+                    <!-- Data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="lop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Thêm Lớp</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="lop-form">
+                    <input type="hidden" id="lop-id">
+
+                    <div class="form-group">
+                        <label for="class_code">Mã Lớp *</label>
+                        <input type="text" id="class_code" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Tên Lớp *</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="major_id">Chuyên Ngành *</label>
+                        <select id="major_id" required>
+                            <!-- ChuyenNganh options will be loaded here -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cohort_id">Niên Khóa *</label>
+                        <select id="cohort_id" required>
+                            <!-- NienKhoa options will be loaded here -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Hủy</button>
+                <button class="btn-primary" onclick="saveLop()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/lop.js') }}"></script>
+</body>
+</html>
