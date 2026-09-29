@@ -101,3 +101,19 @@ class BoMon(db.Model):
             'name': self.name,
             'khoa_id': self.khoa_id
         }
+
+# Model Chuyên Ngành
+class ChuyenNganh(db.Model):
+    __tablename__ = 'chuyen_nganh'
+    id = db.Column(db.Integer, primary_key=True)
+    major_code = db.Column(db.String(50), unique=True, nullable=False) # MCN
+    name = db.Column(db.String(150), nullable=False) # TenNganh
+    faculty_id = db.Column(db.Integer, db.ForeignKey('khoa.id', ondelete='CASCADE'), nullable=False) # MK
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'major_code': self.major_code,
+            'name': self.name,
+            'faculty_id': self.faculty_id
+        }

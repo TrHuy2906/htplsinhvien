@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Chuyên Ngành</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <h2>EduManage Pro</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/" class="nav-item">
+                    <i class="fa-solid fa-users"></i> Quản lý Sinh viên
+                </a>
+                <a href="/giangvien" class="nav-item">
+                    <i class="fa-solid fa-chalkboard-user"></i> Quản lý Giảng viên
+                </a>
+                <a href="/khoa_bomon" class="nav-item">
+                    <i class="fa-solid fa-building"></i> Khoa & Bộ môn
+                </a>
+                <a href="/chuyennganh" class="nav-item active">
+                    <i class="fa-solid fa-book-open"></i> Chuyên ngành
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1><i class="fa-solid fa-book-open"></i> Quản Lý Chuyên Ngành</h1>
+                    <p class="subtitle">Quản trị danh mục Chuyên ngành thuộc trường</p>
+                </div>
+            </header>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div class="search-box" style="flex: 1; margin-right: 15px;">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="cnSearchInput" placeholder="Tìm tên hoặc mã chuyên ngành...">
+                </div>
+                <button class="btn-primary" id="openCNModalBtn"><i class="fa-solid fa-plus"></i> Thêm Chuyên ngành</button>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã CN</th>
+                            <th>Tên Chuyên Ngành</th>
+                            <th>Khoa</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cnTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for ChuyenNganh -->
+    <div class="modal-overlay" id="cnModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="cnModalTitle">Thêm Chuyên Ngành Mới</h2>
+                <button class="modal-close" id="cnModalCloseBtn">&times;</button>
+            </div>
+            <form id="cnForm">
+                <div class="modal-body">
+                    <input type="hidden" id="cnId" value="">
+
+                    <div class="form-group">
+                        <label for="cnCode"><i class="fa-solid fa-barcode"></i> Mã chuyên ngành *</label>
+                        <input type="text" class="form-control" id="cnCode" required placeholder="Ví dụ: CNTT">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cnName"><i class="fa-solid fa-book-open"></i> Tên chuyên ngành *</label>
+                        <input type="text" class="form-control" id="cnName" required placeholder="Ví dụ: Công nghệ thông tin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cnFacultyId"><i class="fa-solid fa-building"></i> Khoa trực thuộc *</label>
+                        <select class="form-control" id="cnFacultyId" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cnModalCancelBtn">Hủy</button>
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-save"></i> Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/static/js/chuyennganh.js"></script>
+</body>
+</html>
