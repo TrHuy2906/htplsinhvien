@@ -1,68 +1,129 @@
-# Hệ thống Quản lý Sinh viên - Triển khai và Quản trị Hệ thống Phần mềm
+# Hệ Thống Quản Lý Sinh Viên
 
-Dự án này là Đề tài số 2 (Hệ thống Quản lý Sinh viên) thuộc môn học Triển khai và Quản trị Hệ thống Phần mềm. Dự án bao gồm ứng dụng Web viết bằng Python (Flask), cơ sở dữ liệu MySQL, và các hệ thống giám sát, log tập trung hoàn chỉnh được triển khai 100% qua Docker Compose.
+Dự án Hệ thống Quản lý Sinh viên được xây dựng dựa trên kiến trúc Microservices cơ bản với Docker, nhằm mục đích quản lý sinh viên, giảng viên, khoa, bộ môn, chuyên ngành, niên khóa và lớp.
 
-## 📋 Kiến trúc Hệ thống
-Hệ thống sử dụng các thành phần sau:
-- **Ứng dụng Web:** Python (Flask) + SQLAlchemy (tự động xuất metrics).
-- **Cơ sở dữ liệu:** MySQL 8.0 & phpMyAdmin.
-- **Reverse Proxy:** Nginx (Có cấu hình Security Headers bảo mật cơ bản).
-- **Giám sát (Monitoring):** Prometheus (Scrape metrics) & Grafana (Dashboard).
-- **Quản lý Log tập trung:** Loki & Promtail (Truy vấn bằng LogQL).
+## 1. Mục tiêu
+- Cung cấp giải pháp quản lý sinh viên toàn diện.
+- Trình diễn khả năng triển khai, bảo mật và quản trị hệ thống phần mềm.
+- Đảm bảo tính sẵn sàng cao, dễ dàng mở rộng và giám sát.
 
-## 🚀 Các tiêu chí đã đáp ứng
-1. **Quản lý mã nguồn:** File thiết lập Docker Compose, cấu hình Nginx, Prometheus đầy đủ.
-2. **Triển khai ứng dụng:** Chạy ổn định qua Docker, Web kết nối DB MySQL thành công.
-3. **Nginx Reverse Proxy:** Ứng dụng web được phân giải qua cổng 80 của Nginx Proxy.
-4. **Hệ thống giám sát:** Đã tích hợp thư viện xuất metrics của Flask sang Prometheus, có Grafana.
-5. **Hệ thống log (Loki + Promtail):** Promtail mount trực tiếp vào Docker socket để bắt log toàn bộ container gửi về Loki.
-6. **Hardening (Bảo mật):**
-   - Ứng dụng Flask chạy trên Docker sử dụng tài khoản `non-root user`.
-   - Các dịch vụ kết nối với nhau qua `network isolation` (Mạng `app-network` riêng, không expose trực tiếp port DB ra public nếu không cần thiết).
-   - Nginx có các thiết lập Security Headers (`X-Frame-Options`, `X-XSS-Protection`).
+## 2. Công nghệ
+- **Backend:** Python, Flask, Gunicorn
+- **Database:** MySQL 8.0, SQLAlchemy (ORM)
+- **Frontend:** HTML, CSS, JavaScript (Vanilla)
+- **Web Server / Proxy:** Nginx
+- **Monitoring & Logging:** Prometheus, Grafana, Loki, Promtail
+- **Deployment:** Docker & Docker Compose
 
----
+## 3. Kiến trúc Hệ thống
+Hệ thống tuân theo mô hình Client-Server. Client giao tiếp với Backend thông qua Nginx Reverse Proxy. Nginx định tuyến các API và web requests tới Flask Backend chạy Gunicorn. Backend lưu trữ dữ liệu vào MySQL. Toàn bộ các service được giám sát bởi hệ thống Prometheus và Grafana, cùng với Loki/Promtail để quản lý log tập trung.
 
-## 🛠 Hướng dẫn Cài đặt & Chạy hệ thống
+## 4. Cấu trúc thư mục
+```
+.
+├── app/                  # Mã nguồn Backend Flask
+│   ├── static/           # CSS, JS
+│   ├── templates/        # HTML templates
+│   ├── bomon/, khoa/, ...# Các Blueprint module (Domain-driven)
+│   ├── models.py         # SQLAlchemy Models
+│   ├── app.py            # Flask App entrypoint
+│   └── Dockerfile        # Backend Docker image config
+├── nginx/                # Cấu hình Nginx
+├── prometheus/           # Cấu hình Prometheus
+├── promtail/             # Cấu hình Promtail
+├── scripts/              # Các script backup / restore
+├── .env.example          # Mẫu biến môi trường
+├── docker-compose.yml    # File triển khai toàn bộ hệ thống
+└── README.md
+```
 
-### 1. Yêu cầu hệ thống
-- Máy tính đã cài đặt [Docker](https://www.docker.com/products/docker-desktop) và [Docker Compose](https://docs.docker.com/compose/install/).
+## 5. Docker Architecture
+Các container (tất cả nằm trong network `htpl-network`):
+- `htpl_web`: Chạy ứng dụng Flask bằng Gunicorn.
+- `htpl_db`: Cơ sở dữ liệu MySQL 8.0.
+- `htpl_phpmyadmin`: Trình quản lý DB qua web.
+- `htpl_nginx`: Reverse Proxy định tuyến traffic.
+- `htpl_prometheus`: Server giám sát metrics.
+- `htpl_grafana`: Dashboard theo dõi hệ thống.
+- `htpl_loki` & `htpl_promtail`: Thu thập và lưu trữ log.
 
-### 2. Khởi chạy
-Mở Terminal/PowerShell tại thư mục chứa file `docker-compose.yml` và chạy lệnh sau:
+## 6. Cách Cài Đặt & Chạy Production
+
+**Bước 1: Clone repo và tạo file .env**
+```bash
+cp .env.example .env
+```
+*(Sửa nội dung file .env cho phù hợp môi trường production. Bắt buộc thay đổi `SECRET_KEY` và `DB_PASSWORD`)*
+
+**Bước 2: Triển khai với Docker Compose**
 ```bash
 docker-compose up -d --build
 ```
-*Lệnh này sẽ tự động tải các images cần thiết, build mã nguồn ứng dụng Web và khởi động toàn bộ 8 services.*
 
-### 3. Hướng dẫn truy cập và Demo
-Sau khi tất cả container chuyển sang trạng thái "Running", bạn có thể truy cập các thành phần của hệ thống qua trình duyệt:
+Hệ thống sẽ tự động khởi tạo cơ sở dữ liệu và dữ liệu demo khi chạy lần đầu.
 
-| Thành phần | Đường dẫn | Tài khoản mặc định | Mô tả |
-| :--- | :--- | :--- | :--- |
-| **Ứng dụng Web (Giao diện UI)** | `http://localhost/` | Không có | Trang Dashboard quản lý sinh viên trực quan |
-| **API Sinh viên (JSON)** | `http://localhost/students` | Không có | API lấy/thêm/sửa/xoá thông tin sinh viên |
-| **Kiểm tra sức khỏe (Health)** | `http://localhost/health` | Không có | Test đường dẫn API trạng thái hệ thống |
-| **phpMyAdmin** | `http://localhost:8080` | `root` / `rootpassword` | Quản trị CSDL MySQL |
-| **Grafana** | `http://localhost:3000` | `admin` / `admin` | Xem Dashboard giám sát hệ thống |
-| **Prometheus** | `http://localhost:9090` | Không có | Kiểm tra Metrics và Targets |
-| **MySQL (Host)** | `localhost:3307` | `root` / `rootpassword` | Kết nối CSDL từ host (nếu dùng Workbench) |
+## 7. Các Port Mặc Định
+| Service | Port ngoài | Ghi chú |
+|---------|------------|---------|
+| Web App (qua Nginx) | 8081 | Truy cập chính cho User |
+| phpMyAdmin | 8082 | Quản trị viên CSDL |
+| MySQL | 3308 | Kết nối CSDL từ ngoài (Dev) |
+| Grafana | 3001 | Dashboard Monitor |
+| Prometheus | 9091 | Prometheus Metrics |
+| Loki | 3101 | Log Server API |
 
-### 4. Hướng dẫn xem Log bằng LogQL (Loki)
-1. Đăng nhập vào **Grafana** (`http://localhost:3000`).
-2. Vào **Connections > Data Sources** -> Add data source -> Chọn **Loki**.
-3. Tại ô URL điền: `http://loki:3100` và nhấn **Save & Test**.
-4. Vào thẻ **Explore** (Thanh menu bên trái).
-5. Chạy các truy vấn LogQL mẫu sau để lọc log:
-   - *Xem log của ứng dụng web:* `{container="student_web"}`
-   - *Xem log của proxy nginx:* `{container="student_nginx"}`
-   - *Tìm lỗi (error):* `{container="student_web"} |= "error"`
+## 8. Tài Khoản Demo
+- **Username:** admin
+- **Password:** admin123
+- **Role:** Quản trị viên (Admin - Role 2)
+
+## 9. Phân Quyền (Roles)
+- `0`: Sinh viên (Giới hạn quyền xem)
+- `1`: Giảng viên (Có quyền quản lý nhất định)
+- `2`: Quản trị viên (Toàn quyền hệ thống)
+
+## 10. API Chính
+- `/login`, `/logout`, `/change_password`: Xác thực và bảo mật.
+- `/students`, `/giangvien`, `/khoa_bomon`, `/chuyennganh`, `/nienkhoa`, `/lop`: Các module RESTful.
+- `/health`: API health check (kiểm tra trạng thái app và DB).
+- `/metrics`: Endpoint Prometheus scrape metrics.
+
+## 11. Security Notes (Bảo mật)
+- Mật khẩu người dùng được hash 100% bằng `werkzeug.security`.
+- Sử dụng Session dựa trên Flask (được ký mã hóa bằng `SECRET_KEY` lấy từ biến môi trường).
+- Cookie bảo mật với cờ `HttpOnly` và `SameSite=Lax`.
+- API giới hạn phân quyền chặt chẽ (`@login_required`, `@role_required`).
+- API `/health` không leak lỗi stack trace.
+- Chạy với Gunicorn worker environment, không dùng chế độ debug.
+- Nginx chặn access trực tiếp và thêm các security headers chống XSS, sniffing.
+
+## 12. Backup & Restore
+Các script có sẵn trong thư mục `scripts/`:
+
+**Backup:**
+```bash
+./scripts/backup.sh
+```
+File backup SQL sẽ được tạo trong thư mục `backups/` có đánh dấu thời gian.
+
+**Restore:**
+```bash
+./scripts/restore.sh backups/student_db_YYYYMMDD_HHMMSS.sql
+```
+*Lưu ý: Phải chạy lệnh này cẩn thận vì nó ghi đè cơ sở dữ liệu hiện tại.*
+
+## 13. Testing
+Đã thực hiện kiểm tra thủ công cho các case:
+- Login hợp lệ / sai thông tin.
+- Role chặn đúng các tính năng khi không phải admin.
+- Kiểm tra trùng lặp khóa (Mã SV, Mã Lớp, v.v.).
+- Rollback thành công khi lỗi Database Foreign Key.
+- Khởi động hệ thống an toàn, tự động thử kết nối DB nếu MySQL khởi động chậm.
+
+## 14. Troubleshooting
+- **Lỗi kết nối CSDL khi khởi động:** Backend đã được cài đặt chế độ tự động retry 20 lần nếu DB chưa sẵn sàng.
+- **Không cập nhật giao diện/tính năng:** Hãy chạy lệnh build lại: `docker-compose up -d --build --force-recreate`.
+- **Xem logs hệ thống:** Truy cập Grafana -> Explore -> Chọn data source Loki hoặc dùng lệnh `docker logs htpl_web`.
 
 ---
-
-## 🛑 Dừng hệ thống
-Để tắt toàn bộ hệ thống và xoá các container:
-```bash
-docker-compose down
-```
-*(Thêm cờ `-v` nếu bạn muốn xoá luôn dữ liệu Database).*
+*Lưu ý: Các module "Thực tập", "Đồ án", "Hội đồng" chưa được triển khai mã nguồn do không có đủ căn cứ thiết kế từ tài liệu mô tả chính thức, nhằm đảm bảo tuân thủ nguyên tắc không tự đoán cấu trúc nghiệp vụ.*

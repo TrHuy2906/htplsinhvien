@@ -1,6 +1,7 @@
 import os
 import time
-from flask import Flask, render_template, jsonify
+import logging
+from flask import Flask, render_template, jsonify, session
 from sqlalchemy import text
 from prometheus_flask_exporter import PrometheusMetrics
 
@@ -16,17 +17,30 @@ from nienkhoa import nienkhoa_bp
 from lop import lop_bp
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Secure secret key for session management
+
+# Production-safe SECRET_KEY: read from env, fallback for dev only
+app.secret_key = os.environ.get('SECRET_KEY') or os.urandom(24)
+
+# Session security settings
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Tích hợp Prometheus tự động thu thập metrics (đáp ứng Tiêu chí 4)
 metrics = PrometheusMetrics(app)
 
 # Cấu hình kết nối MySQL (Đọc từ biến môi trường của Docker)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 
+    'DATABASE_URL',
     'mysql+pymysql://root:rootpassword@db:3306/student_db'
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Logging configuration
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s: %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Khởi tạo database với app
 db.init_app(app)
@@ -62,14 +76,19 @@ def init_db():
                     ]
                     db.session.bulk_save_objects(samples)
                     db.session.commit()
-                    print("Sample students created!")
-                print("Database tables initialized successfully!")
+                    logger.info("Sample students created!")
+                logger.info("Database tables initialized successfully!")
                 return
         except Exception as e:
             retries -= 1
-            print(f"Waiting for database to be ready... ({retries} retries left): {e}")
+            logger.warning(f"Waiting for database to be ready... ({retries} retries left): {e}")
             time.sleep(2)
-    print("Warning: Database initialization retries exhausted.")
+    logger.error("Database initialization retries exhausted.")
+
+with app.app_context():
+    # Attempt to initialize DB at startup even with gunicorn
+    import threading
+    threading.Thread(target=init_db, daemon=True).start()
 
 # Giao diện Web Quản lý Sinh viên chính
 @app.route('/')
@@ -99,6 +118,35 @@ def khoa_bomon_index():
 def chuyennganh_index():
     return render_template('chuyennganh.html')
 
+# API đổi mật khẩu
+@app.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    from flask import request
+    if not request.is_json:
+        return jsonify({'error': 'Request must be JSON'}), 400
+    data = request.get_json(silent=True)
+    if data is None:
+        return jsonify({'error': 'Invalid JSON format'}), 400
+    old_password = data.get('old_password', '')
+    new_password = data.get('new_password', '')
+    if not old_password or not new_password:
+        return jsonify({'error': 'old_password and new_password are required'}), 400
+    if len(new_password) < 6:
+        return jsonify({'error': 'New password must be at least 6 characters'}), 400
+    user = User.query.get(session.get('user_id'))
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    if not user.check_password(old_password):
+        return jsonify({'error': 'Old password is incorrect'}), 401
+    user.set_password(new_password)
+    try:
+        db.session.commit()
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception:
+        db.session.rollback()
+        return jsonify({'error': 'Internal server error'}), 500
+
 # API Giám sát kiểm tra sức khoẻ hệ thống (Health Check)
 @app.route('/health', methods=['GET'])
 @metrics.do_not_track()
@@ -106,8 +154,8 @@ def health():
     try:
         db.session.execute(text('SELECT 1'))
         return jsonify({'status': 'healthy', 'database': 'connected'}), 200
-    except Exception as e:
-        return jsonify({'status': 'unhealthy', 'database': str(e)}), 500
+    except Exception:
+        return jsonify({'status': 'unhealthy', 'database': 'disconnected'}), 500
 
 if __name__ == '__main__':
     init_db()
