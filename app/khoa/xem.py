@@ -10,13 +10,13 @@ def get_khoa_list():
     try:
         search_name = request.args.get('name', '').strip().lower()
         search_code = request.args.get('mk', '').strip()
-        
+
         query = Khoa.query
         if search_name:
             query = query.filter(db.func.lower(Khoa.name).like(f"%{search_name}%"))
         if search_code:
             query = query.filter(Khoa.khoa_code == search_code)
-            
+
         khoas = query.all()
         return jsonify([k.to_dict() for k in khoas]), 200
     except Exception as e:

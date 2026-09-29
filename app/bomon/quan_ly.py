@@ -14,7 +14,7 @@ def add_bomon():
     bomon_code = data.get('bomon_code').strip()
     name = data.get('name').strip()
     khoa_id = data.get('khoa_id')
-    
+
     if BoMon.query.filter_by(bomon_code=bomon_code).first():
         return jsonify({"error": "Duplicate bomon_code"}), 400
 

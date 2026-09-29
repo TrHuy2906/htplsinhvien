@@ -13,7 +13,7 @@ def add_khoa():
 
     khoa_code = data.get('khoa_code').strip()
     name = data.get('name').strip()
-    
+
     if Khoa.query.filter_by(khoa_code=khoa_code).first():
         return jsonify({"error": "Duplicate khoa_code"}), 400
 
