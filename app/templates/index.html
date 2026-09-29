@@ -117,6 +117,7 @@
                         <tr>
                             <th style="width: 80px;">Mã SV</th>
                             <th>Thông tin sinh viên</th>
+                            <th>Liên hệ & Tài khoản</th>
                             <th>Lớp</th>
                             <th>Điểm số</th>
                             <th>Xếp loại học lực</th>
@@ -177,8 +178,38 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="studentCode"><i class="fa-solid fa-id-card"></i> Mã sinh viên</label>
+                        <input type="text" class="form-control" id="studentCode" placeholder="Ví dụ: SV001" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
                         <label for="studentClass"><i class="fa-solid fa-chalkboard-user"></i> Lớp học *</label>
                         <input type="text" class="form-control" id="studentClass" required placeholder="Ví dụ: CNTT-K15" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentGender"><i class="fa-solid fa-venus-mars"></i> Giới tính</label>
+                        <select class="form-control" id="studentGender">
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentDob"><i class="fa-solid fa-calendar"></i> Ngày sinh</label>
+                        <input type="date" class="form-control" id="studentDob">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentEmail"><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" class="form-control" id="studentEmail" placeholder="Ví dụ: email@example.com" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentAccountId"><i class="fa-solid fa-user-gear"></i> Mã tài khoản liên kết (User ID)</label>
+                        <input type="number" class="form-control" id="studentAccountId" placeholder="Ví dụ: 2">
                     </div>
 
                     <div class="form-group">

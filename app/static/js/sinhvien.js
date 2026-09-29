@@ -80,9 +80,9 @@ function renderStudents() {
 
     let filtered = allStudents.filter(s => {
         const nameMatch = s.name.toLowerCase().includes(search);
-        const idMatch = String(s.id).includes(search);
+        const codeMatch = (s.student_code || '').toLowerCase().includes(search);
         const classMatch = (s.class || s.class_name || '').toLowerCase().includes(search);
-        const matchesSearch = !search || nameMatch || idMatch || classMatch;
+        const matchesSearch = !search || nameMatch || codeMatch || classMatch;
 
         const matchesClass = (classVal === 'ALL') || (s.class || s.class_name) === classVal;
 
@@ -121,15 +121,21 @@ function renderStudents() {
         return `
             <tr>
                 <td>
-                    <strong style="color: var(--text-dim); font-size: 13px;">#${s.id}</strong>
+                    <strong style="color: var(--text-dim); font-size: 13px;">${s.student_code || 'Chưa có'}</strong>
                 </td>
                 <td>
                     <div class="student-info">
                         <div class="avatar" style="background: ${avatarBg};">${initials}</div>
                         <div>
                             <div class="student-name">${s.name}</div>
-                            <div class="student-id">Mã định danh: SV-${s.id.toString().padStart(4, '0')}</div>
+                            <div class="student-id">${s.gender ? s.gender + ' | ' : ''}${s.dob || 'Chưa cập nhật ngày sinh'}</div>
                         </div>
+                    </div>
+                </td>
+                <td>
+                    <div style="font-size: 13px;">
+                        <div><i class="fa-solid fa-envelope" style="color: var(--text-muted);"></i> ${s.email || 'Chưa có email'}</div>
+                        <div style="margin-top: 4px;"><i class="fa-solid fa-user-gear" style="color: var(--text-muted);"></i> ID Tài khoản: ${s.account_id || 'Trống'}</div>
                     </div>
                 </td>
                 <td>
@@ -211,13 +217,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('studentName').value.trim();
             const class_name = document.getElementById('studentClass').value.trim();
             const score = parseFloat(document.getElementById('studentScore').value);
+            const student_code = document.getElementById('studentCode').value.trim() || null;
+            const gender = document.getElementById('studentGender').value || null;
+            const dob = document.getElementById('studentDob').value || null;
+            const email = document.getElementById('studentEmail').value.trim() || null;
+            const account_id = document.getElementById('studentAccountId').value ? parseInt(document.getElementById('studentAccountId').value) : null;
 
             if (!name || !class_name || isNaN(score) || score < 0 || score > 10) {
                 showToast('Vui lòng kiểm tra lại thông tin hợp lệ!', 'error');
                 return;
             }
 
-            const payload = { name, class: class_name, score };
+            const payload = {
+                name,
+                class: class_name,
+                score,
+                student_code,
+                gender,
+                dob,
+                email,
+                account_id
+            };
 
             try {
                 let res;
@@ -303,6 +323,11 @@ window.editStudent = function(id) {
     document.getElementById('studentName').value = s.name;
     document.getElementById('studentClass').value = s.class || s.class_name;
     document.getElementById('studentScore').value = s.score;
+    document.getElementById('studentCode').value = s.student_code || '';
+    document.getElementById('studentGender').value = s.gender || '';
+    document.getElementById('studentDob').value = s.dob || '';
+    document.getElementById('studentEmail').value = s.email || '';
+    document.getElementById('studentAccountId').value = s.account_id || '';
     
     const rank = getAcademicRank(s.score);
     const preview = document.getElementById('scoreRatingPreview');
