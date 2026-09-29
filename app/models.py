@@ -8,6 +8,11 @@ class Student(db.Model):
     name = db.Column(db.String(100), nullable=False)
     class_name = db.Column(db.String(50), nullable=False)
     score = db.Column(db.Float, nullable=False)
+    student_code = db.Column(db.String(50), unique=True, nullable=True)
+    gender = db.Column(db.String(10), nullable=True)
+    email = db.Column(db.String(100), nullable=True)
+    dob = db.Column(db.Date, nullable=True)
+    account_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'), unique=True, nullable=True)
 
     def to_dict(self):
         return {
@@ -15,7 +20,12 @@ class Student(db.Model):
             'name': self.name,
             'class': self.class_name,
             'class_name': self.class_name,
-            'score': round(self.score, 2)
+            'score': round(self.score, 2),
+            'student_code': self.student_code,
+            'gender': self.gender,
+            'email': self.email,
+            'dob': self.dob.isoformat() if self.dob else None,
+            'account_id': self.account_id
         }
 
 # Model Tài khoản người dùng (Xác thực hiện tại)
