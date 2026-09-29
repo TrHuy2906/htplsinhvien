@@ -37,7 +37,7 @@ function loadNienKhoa(mnk = '', name = '') {
         if (!data) return;
         const tbody = document.getElementById('nienkhoa-table-body');
         tbody.innerHTML = '';
-        
+
         if (data.error) {
             alert(data.error);
             return;
@@ -95,14 +95,14 @@ function editNienKhoa(id) {
             alert(data.error);
             return;
         }
-        
+
         document.getElementById('modal-title').textContent = 'Sửa Niên Khóa';
         document.getElementById('nienkhoa-id').value = data.id;
         document.getElementById('cohort_code').value = data.cohort_code;
         document.getElementById('name').value = data.name;
         document.getElementById('start_year').value = data.start_year;
         document.getElementById('end_year').value = data.end_year;
-        
+
         document.getElementById('nienkhoa-modal').style.display = 'block';
     })
     .catch(error => console.error('Error:', error));
@@ -110,7 +110,7 @@ function editNienKhoa(id) {
 
 function saveNienKhoa() {
     const id = document.getElementById('nienkhoa-id').value;
-    
+
     // Explicitly parse years as integers so JSON validation passes
     const data = {
         cohort_code: document.getElementById('cohort_code').value.trim(),

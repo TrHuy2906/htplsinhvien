@@ -9,7 +9,7 @@ from auth import login_required, role_required
 def add_nienkhoa():
     if not request.is_json:
         return jsonify({'error': 'Request must be JSON'}), 400
-    
+
     data = request.get_json(silent=True)
     if data is None:
         return jsonify({'error': 'Invalid JSON format'}), 400
@@ -68,7 +68,7 @@ def update_nienkhoa(id):
 
     if not request.is_json:
         return jsonify({'error': 'Request must be JSON'}), 400
-    
+
     data = request.get_json(silent=True)
     if data is None:
         return jsonify({'error': 'Invalid JSON format'}), 400

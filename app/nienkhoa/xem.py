@@ -18,10 +18,10 @@ def get_nienkhoa_list():
             conditions.append(NienKhoa.cohort_code.ilike(f"%{mnk}%"))
         if name:
             conditions.append(NienKhoa.name.ilike(f"%{name}%"))
-        
+
         if conditions:
             query = query.filter(and_(*conditions))
-            
+
         items = query.all()
         return jsonify([item.to_dict() for item in items]), 200
 
